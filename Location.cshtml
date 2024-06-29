@@ -5,6 +5,16 @@
 @*<h2>Locations</h2>*@
 <script>
     $(document).ready(function () {
+        $('#btn_add').click(function () {
+            $('#view').show();
+            $('#list').hide();
+            clearForm();
+        });
+        $('#btn_close').click(function () {
+            $('#view').hide();
+            $('#list').show();
+            clearForm();
+        });
         $('#btn_submit').click(function () {
             if (validate()) {
                 var obj = {
@@ -26,6 +36,7 @@
                     success: function (op) {
                         if (op != null) {
                             if (op.res) {
+                                clearForm();
                                 showSuccessInfo(op.msg);
                             }
                             else
@@ -40,10 +51,30 @@
             }
         });
     });
+    var clearForm = function () {
+        $(".alert").hide();
+        $('#hid_id').val('0');
+        $('#txt_locations_name').val('');
+        $('#txt_locations_code').val('');
+        $('#txt_locations_mobile_No').val('');
+        $('#txt_locations_address').val('');
+        $('#sel_type').val('0');
+        $("#chk_status").prop("checked", true);
+        $("#chk_status").trigger("change");
+    }
 
+    var loadForm = function (obj) {
+        $('#hid_id').val(obj.locationid);
+        $('#txt_locations_name').val(obj.locationname);
+        $('#txt_locations_code').val(obj.locationcode);
+        $('#txt_locations_mobile_No').val(obj.contactno);
+        $('#txt_locations_address').val(obj.address);
+        $('#sel_type').val(obj.type);
+        $("#chk_status").prop("checked", obj.status);
+        $("#chk_status").trigger("change");
+    }
     var validate = function () {
         $(".alert").hide();
-
         $('#txt_locations_name').val($.trim($('#txt_locations_name').val()));
         $('#txt_locations_code').val($.trim($('#txt_locations_code').val()));
         $('#txt_locations_mobile_No').val($.trim($('#txt_locations_mobile_No').val()));
@@ -73,6 +104,12 @@
             return false;
         }
 
+        else if ($('#sel_type').val() === '0') {
+            showErrorInfo("Please Select Location Type");
+            $('#sel_type').focus();
+            return false;
+        }
+
 
         else if ($('#txt_locations_address').val() === '') {
             showErrorInfo("Enter Address Here....");
@@ -82,8 +119,7 @@
         return true;
     }
 </script>
-<div class="container">
-    <div class="row">
+    <div id="view" class="row  hide-default">
         <div class="col-md-12">
             <div class="widget box">
                 <div class="widget-header">
@@ -114,8 +150,8 @@
                                 <div class="col-md-6">
                                     <label class="col-md-5 control-label" for="locations_type">Type:</label>
                                     <div class="col-md-7">
-                                        <select id="sel_customer" name="customer" class="form-control">
-                                            <option value="">Select Type</option>
+                                        <select id="sel_type" name="type" class="form-control">
+                                            <option value="0">Select Type</option>
                                             <option value="1">Shop</option>
                                             <option value="4">Franchise</option>
                                         </select>
@@ -151,8 +187,36 @@
                         </div>
                         <div class="form-actions" style="margin-top: 3rem;">
                             <button type="button" id="btn_submit" class="btn btn-primary pull-right">Save <i class="icon-save"></i></button>
+                            <button type="button" id="btn_close" class="submit btn btn-danger pull-right btn_close">Close <i class="icon-remove"></i></button>
                         </div>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="list" class="row">
+    <div class="col-md-12">
+        <div class="widget box">
+            <div class="widget-header">
+                <h4><i class="icon-reorder"></i>Smart Order :: Locations  </h4>
+                <button class="btn btn-info pull-right btn-add" id="btn_add"><i class="icon-plus"></i>&nbsp;Add New</button>
+            </div>
+            <div class="widget-content">
+                <div class="row" style="margin: 5px 0px;">
+                    <table id="datatable" class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr class="sticky-row">
+                                <th style="width: 5%">SNo</th>
+                                <th style="width: 40%">Location Name</th>
+                                <th style="width: 40%">Location Code</th>
+                                <th style="width: 40%">Type</th>
+                                <th style="width: 15%">Status</th>
+                                <th style="width: 15%"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="databody"></tbody>
+                    </table>
                 </div>
             </div>
         </div>
