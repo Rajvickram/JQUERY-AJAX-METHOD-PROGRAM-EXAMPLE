@@ -1,0 +1,160 @@
+@{
+    ViewBag.Title = "Locations";
+}
+
+@*<h2>Locations</h2>*@
+<script>
+    $(document).ready(function () {
+        $('#btn_submit').click(function () {
+            if (validate()) {
+                var obj = {
+                    locationid: $("#hid_id").val(),
+                    locationname: $("#txt_locations_name").val(),
+                    locationcode: $("#txt_locations_code").val(),
+                    type: $("#sel_customer").val(),
+                    contactno: $("#txt_locations_mobile_No").val(),
+                    address: $("#txt_locations_address").val(),
+                    user: userName
+                };
+                
+                $.ajax({
+                    type: "POST",
+                    url: ServiceApiName + "setLocation",
+                    data: JSON.stringify(obj),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (op) {
+                        if (op != null) {
+                            if (op.res) {
+                                showSuccessInfo(op.msg);
+                            }
+                            else
+                                showErrorInfo(op.msg);
+                        }
+                        else
+                            showErrorInfo("Please Try Again");
+                    },
+                    error: function (msg) { },
+                    complete: function () { }
+                });
+            }
+        });
+    });
+
+    var validate = function () {
+        $(".alert").hide();
+
+        $('#txt_locations_name').val($.trim($('#txt_locations_name').val()));
+        $('#txt_locations_code').val($.trim($('#txt_locations_code').val()));
+        $('#txt_locations_mobile_No').val($.trim($('#txt_locations_mobile_No').val()));
+        $('#txt_locations_address').val($.trim($('#txt_locations_address').val()));
+
+        if ($('#txt_locations_name').val() === '') {
+            showErrorInfo("Enter Location Name Here...");
+            $('#txt_locations_name').focus();
+            return false;
+        }
+
+        else if ($('#txt_locations_code').val() === '') {
+            showErrorInfo("Enter Location Code Here..");
+            $('#txt_locations_code').focus();
+            return false;
+        }
+
+        else if ($('#txt_locations_mobile_No').val() === '') {
+            showErrorInfo("Enter Mobile Number Here...");
+            $('#txt_locations_mobile_No').focus();
+            return false;
+        }
+
+        else if ($('#txt_locations_mobile_No').val().length < 10) {
+            showErrorInfo("Please Enter 10 Number Only..");
+            $('#txt_locations_mobile_No').focus();
+            return false;
+        }
+
+
+        else if ($('#txt_locations_address').val() === '') {
+            showErrorInfo("Enter Address Here....");
+            $('#txt_locations_address').focus();
+            return false;
+        }
+        return true;
+    }
+</script>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="widget box">
+                <div class="widget-header">
+                    <h4><i class="icon-reorder"></i>SmartShop</h4>
+                </div>
+                <div class="widget-content">
+                    <form id="frm-value" name="frm-value" class="form-horizontal" action="#">
+                        <div class="alert alert-info fade in"><i class="icon-remove close" data-dismiss="alert"></i><span>Please Wait...</span></div>
+                        <input type="hidden" id="hid_id" value="0" />
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="col-md-5 control-label" for="locations_name">Location Name:</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" type="text" id="txt_locations_name" style="text-transform: capitalize;" name="locations_name" placeholder="Name" maxlength="20" />
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="col-md-5 control-label" for="locations_code">Location Code:</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" type="text" id="txt_locations_code" style="text-transform: capitalize;" name="locations_code" placeholder="Code" maxlength="50" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="col-md-5 control-label" for="locations_type">Type:</label>
+                                    <div class="col-md-7">
+                                        <select id="sel_customer" name="customer" class="form-control">
+                                            <option value="">Select Type</option>
+                                            <option value="1">Shop</option>
+                                            <option value="4">Franchise</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="col-md-5 control-label" for="locations_contact-no">Contact No:</label>
+                                    <div class="col-md-7">
+                                        <input class="form-control" type="tel" id="txt_locations_mobile_No" style="text-transform: capitalize;" name="locations_contact-no" placeholder="Contact No" maxlength="10" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label class="col-md-5 control-label">Status :</label>
+                                    <div class="col-md-3">
+                                        <div class="make-switch" data-on-label="<i class='icon-ok'></i>" data-off-label="<i class='icon-remove'></i>">
+                                            <input type="checkbox" id="chk_status" checked class="toggle" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <label class="col-md-5 control-label" for="locations_name">Address:</label>
+                                <div class="col-md-7">
+                                    <textarea id="txt_locations_address" name="location_address" rows="3" cols="1000" class="form-control" maxlength="1000" placeholder="Address" style="resize: none;"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions" style="margin-top: 3rem;">
+                            <button type="button" id="btn_submit" class="btn btn-primary pull-right">Save <i class="icon-save"></i></button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
